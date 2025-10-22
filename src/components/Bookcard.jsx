@@ -1,13 +1,13 @@
 "use client";
 
 const Bookcard = ({ book }) => (
-  <div className="w-40 sm:w-44 lg:w-56 flex-shrink-0 cursor-pointer group">
-    {/* Cover Buku */}
-    <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden h-64 sm:h-72 mb-3 relative transform transition duration-300 group-hover:-translate-y-1 group-hover:shadow-xl">
+  <div className="w-44 sm:w-52 lg:w-56 flex-shrink-0 cursor-pointer group transition-all duration-300">
+    {/* Cover */}
+    <div className="relative bg-[var(--color-surface-alt)] rounded-xl shadow-md overflow-hidden h-72 mb-4 transform group-hover:-translate-y-2 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-[var(--color-accent)]/40 transition-all duration-300">
       <img
         src={book.cover}
         alt={`Cover ${book.title}`}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         onError={(e) => {
           e.target.onerror = null;
           e.target.src =
@@ -16,11 +16,11 @@ const Bookcard = ({ book }) => (
       />
     </div>
 
-    {/* Detail Buku */}
-    <h3 className="text-sm font-semibold text-gray-800 leading-tight mb-1 group-hover:text-blue-600 transition duration-150">
+    {/* Teks */}
+    <h3 className="text-base font-bold text-[var(--color-primary-dark)] group-hover:text-[var(--color-accent-dark)] transition duration-300 mb-1">
       {book.title}
     </h3>
-    <p className="text-xs text-gray-500 space-y-0.5">
+    <p className="text-xs text-[var(--color-text-muted)] leading-snug">
       {book.details.map((detail, i) => (
         <span key={i} className="block">
           {detail}

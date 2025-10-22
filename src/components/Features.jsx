@@ -6,104 +6,99 @@ function Features() {
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-16 w-16 text-gray-800"
-          fill="none"
+          className="h-14 w-14 text-[var(--color-primary)]"
           viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth="1"
         >
           <path
+            stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M9.75 17L9 20l-1 1h8l-1-1-1-3m-6.938-2.525a4.5 4.5 0 116.364 0L12 17l-1.414-1.414a4.5 4.5 0 01-6.364 0z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            strokeWidth={2}
+            d="M11 18H2V3h20v2M6 21h5"
           />
         </svg>
       ),
       title: "Akses Mudah",
       description:
-        "Buka koleksi buku dan artikel kapan saja, di mana saja, tanpa batas ruang dan waktu.",
+        "Nikmati kebebasan membaca di mana pun, kapan pun, tanpa batas ruang dan waktu.",
     },
     {
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-16 w-16 text-gray-800"
-          fill="none"
+          className="h-14 w-14 text-[var(--color-primary)]"
           viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth="1"
         >
           <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 6.253v13m0-13C10.832 5.477 9.205 5 7.5 5A2.5 2.5 0 005 7.5c0 1.348.835 2.529 2.074 3.013M12 6.253C13.168 5.477 14.795 5 16.5 5A2.5 2.5 0 0119 7.5c0 1.348-.835 2.529-2.074 3.013M12 12h.01M12 19.253v-2.677M12 19.253c-1.168.776-2.694 1.246-4.253.978M12 19.253c1.168.776 2.694 1.246 4.253.978M4.25 10.25h15.5c.414 0 .75.336.75.75v3.5a.75.75 0 01-.75.75H4.25a.75.75 0 01-.75-.75v-3.5c0-.414.336-.75.75-.75z"
+            fill="currentColor"
+            d="M6 22q-.825 0-1.412-.587T4 20V4q0-.825.588-1.412T6 2h12q.825 0 1.413.588T20 4v16q0 .825-.587 1.413T18 22zm0-2h12V4h-2v7l-2.5-1.5L11 11V4H6zm0 0V4zm5-9l2.5-1.5L16 11l-2.5-1.5z"
           />
         </svg>
       ),
       title: "Belajar Modern",
       description:
-        "Buka koleksi buku dan artikel kapan saja, di mana saja, tanpa batas ruang dan waktu.", // Menggunakan deskripsi yang sama seperti contoh
+        "Teknologi dan literasi berpadu: akses koleksi digital interaktif untuk mendukung gaya belajar masa kini.",
     },
     {
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-16 w-16 text-gray-800"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth="1"
+          className="h-14 w-14 text-[var(--color-primary)]"
+          viewBox="0 0 14 14"
         >
           <path
+            fill="none"
+            stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M8 9h2m-2 4h4m-4 4h4m-4 4h4m-4 4h4m-4 4h4"
+            strokeWidth={1.3}
+            d="M4.194 8.094a1.86 1.86 0 1 0 0-3.719a1.86 1.86 0 0 0 0 3.719M.523 13.479A3.7 3.7 0 0 1 1 11.705a3.71 3.71 0 0 1 3.195-1.868c1.31.003 2.55.727 3.195 1.868a3.7 3.7 0 0 1 .477 1.773m2.02-12.095v-.82m2.799 1.827l.671-.471m-6.271.471l-.672-.471m5.506 3.139a2.055 2.055 0 0 0-2.077-2.042a2.055 2.055 0 0 0-1.99 2.127a2.07 2.07 0 0 0 1.126 1.73v1a.227.227 0 0 0 .226.22h1.361a.227.227 0 0 0 .227-.22V6.855a2.07 2.07 0 0 0 1.128-1.797"
           />
         </svg>
       ),
       title: "Kreatif & Inovatif",
       description:
-        "Mendorong siswa untuk gemar membaca, memperluas wawasan, dan berkembang lebih kreatif.",
+        "Dorong imajinasi tanpa batas dan kembangkan ide-ide brilian melalui sumber bacaan inspiratif.",
     },
   ];
 
   return (
-    <section className="bg-white py-16 md:py-24 text-gray-800 flex justify-center">
-      <div className="flex flex-col md:flex-row max-w-7xl items-center bg-white rounded-xl shadow-2xl overflow-hidden p-8 md:p-12 justify-center">
-        <div className="container mx-auto px-4 max-w-6xl">
-          {/* Judul Utama */}
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 md:mb-16 leading-tight">
-            Belajar Lebih Mudah dengan Perpustakaan{" "}
-            <br className="hidden sm:inline" /> Digital Kanesa
-          </h2>
+    <section className="relative bg-[var(--color-surface-alt)] py-20 md:py-28 overflow-hidden">
+      {/* Ornamen gradient halus */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary-light)]/10 via-transparent to-[var(--color-accent-bg)]/20"></div>
 
-          {/* Grid Fitur */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-16 text-center">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center p-6 bg-gray-50 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-2 hover:shadow-xl"
-              >
-                <div className="mb-6">{feature.icon}</div>
-                <h3 className="text-xl md:text-2xl font-semibold mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed max-w-xs">
-                  {feature.description}
-                </p>
+      <div className="relative container mx-auto px-6 max-w-6xl text-center">
+        {/* Judul Utama */}
+        <h2 className="text-3xl md:text-4xl font-extrabold mb-16 text-[var(--color-primary-dark)]">
+          Belajar Lebih Mudah dengan{" "}
+          <span className="text-[var(--color-accent)]">
+            Perpustakaan Kanesa
+          </span>
+        </h2>
+
+        {/* Grid Fitur */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 md:gap-12">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="group bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-lg border border-[var(--color-primary-light)]/10 hover:border-[var(--color-accent)]/40 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+            >
+              {/* Ikon */}
+              <div className="flex items-center justify-center mb-6">
+                <div className="p-4 rounded-full bg-[var(--color-accent-bg)] text-[var(--color-primary)] shadow-inner ring-4 ring-[var(--color-accent)]/20 group-hover:ring-[var(--color-accent)]/40 transition-all duration-300">
+                  {feature.icon}
+                </div>
               </div>
-            ))}
-          </div>
+
+              {/* Teks */}
+              <h3 className="text-xl font-bold mb-3 text-[var(--color-primary-dark)]">
+                {feature.title}
+              </h3>
+              <p className="text-[var(--color-text-muted)] leading-relaxed">
+                {feature.description}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

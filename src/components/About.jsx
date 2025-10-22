@@ -1,57 +1,54 @@
 "use client";
-
 import React from "react";
 
 function About() {
   const imageUrl = "/images/anggota.png";
 
   return (
-    <section className="bg-gray-100 py-16 md:py-24">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <div className="flex flex-col md:flex-row items-center bg-white rounded-xl shadow-2xl overflow-hidden p-8 md:p-12">
-          {/* Kolom Kiri: Gambar dengan Efek Tumpukan 3D */}
-          <div className="w-full md:w-1/2 flex justify-center p-4 md:p-0 mb-8 md:mb-0">
-            <div className="relative w-72 h-96 group perspective-1000">
-              {/* Kartu Belakang (Cokelat) */}
-              <div className="absolute w-full h-full bg-amber-800 rounded-xl shadow-xl transform rotate-3 origin-bottom-left transition-all duration-500 ease-in-out group-hover:rotate-0 group-hover:translate-x-4 group-hover:-translate-y-4"></div>
+    <section className="relative bg-[var(--color-surface-alt)] py-20 md:py-28 overflow-hidden">
+      {/* Ornamen background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary-light)]/15 via-transparent to-[var(--color-accent-bg)]/20"></div>
 
-              {/* Kartu Depan (Gambar) */}
-              <div className="absolute w-full h-full bg-white rounded-xl shadow-2xl overflow-hidden transform rotate-0 transition-all duration-500 ease-in-out group-hover:rotate-[-3deg] group-hover:translate-x-0 group-hover:translate-y-0">
-                <img
-                  src={imageUrl}
-                  alt="Kelompok Pusjaka"
-                  className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
-                  // Fallback jika gambar tidak dimuat (walaupun kita pakai placeholder)
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src =
-                      "https://placehold.co/400x500/A0A0A0/ffffff?text=Pusjaka";
-                  }}
-                />
-              </div>
+      <div className="relative container mx-auto px-6 max-w-6xl">
+        <div className="flex flex-col md:flex-row items-center bg-white/80 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-[var(--color-primary)]/10 p-8 md:p-12">
+          {/* Kiri: Gambar */}
+          <div className="w-full md:w-1/2 flex justify-center mb-10 md:mb-0">
+            <div className="relative w-72 h-96 group">
+              {/* Layer 3D belakang */}
+              <div className="absolute inset-0 bg-[var(--color-primary)] rounded-2xl shadow-lg transform rotate-3 group-hover:rotate-0 group-hover:translate-x-3 group-hover:-translate-y-3 transition-all duration-500 ease-in-out"></div>
+
+              {/* Gambar utama */}
+              <img
+                src={imageUrl}
+                alt="Kelompok Pusjaka"
+                className="relative w-full h-full object-cover rounded-2xl shadow-xl transition-transform duration-500 group-hover:scale-105"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "https://placehold.co/400x500/A0A0A0/ffffff?text=Pusjaka";
+                }}
+              />
             </div>
           </div>
 
-          {/* Kolom Kanan: Teks dan CTA */}
-          <div className="w-full md:w-1/2 md:pl-12 text-gray-800">
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 leading-snug">
-              Jadi Bagian dari Pusjaka!
+          {/* Kanan: Teks */}
+          <div className="w-full md:w-1/2 md:pl-12 text-[var(--color-text)]">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-5 text-[var(--color-primary-dark)] leading-tight">
+              Jadi Bagian dari{" "}
+              <span className="text-[var(--color-accent)]">Pusjaka!</span>
             </h2>
-            <p className="text-gray-600 mb-8 leading-relaxed">
-              Pusjaka (Pustakawan Remaja KANESA) merupakan organisasi yang
-              berperan dalam pengelolaan perpustakaan serta pengembangan budaya
-              literasi di SMKN 1 Kepanjen. Melalui kegiatan-kegiatannya, Pusjaka
-              menjadi wadah bagi siswa untuk menumbuhkan minat baca, mengasah
-              kemampuan berpikir kritis, dan berkontribusi dalam menciptakan
-              lingkungan sekolah yang gemar membaca dan berbagi pengetahuan.
+
+            <p className="text-[var(--color-text-muted)] mb-8 leading-relaxed">
+              Pusjaka (Pustakawan Remaja Kanesa) adalah wadah penggerak literasi
+              di SMKN 1 Kepanjen. Kami mendorong semangat membaca, berpikir
+              kritis, dan berkontribusi aktif dalam budaya literasi sekolah.
             </p>
 
-            {/* CTA Button */}
             <button
               onClick={() =>
                 alert("Anda akan diarahkan ke formulir pendaftaran Pusjaka.")
               }
-              className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 transform hover:scale-105"
+              className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-[var(--color-primary-dark)] font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 hover:scale-105 focus:ring-4 focus:ring-[var(--color-accent)]/40"
             >
               Daftar Sekarang
             </button>

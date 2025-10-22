@@ -1,18 +1,19 @@
 "use client";
 
 const Categorycard = ({ title, description, bgImage }) => {
-  // Ganti dengan URL gambar dari folder public Anda
   const imageUrl =
     bgImage || "https://placehold.co/500x700/000000/FFFFFF?text=Category+Image";
 
   return (
-    <div className="relative h-64 sm:h-80 overflow-hidden rounded-xl shadow-lg cursor-pointer group transition-all duration-300 transform hover:scale-[1.02]">
+    <div
+      className="relative h-64 sm:h-80 overflow-hidden rounded-2xl cursor-pointer group
+      transition-all duration-500 transform hover:scale-[1.03] hover:shadow-2xl"
+    >
       {/* Gambar Background */}
       <img
         src={imageUrl}
         alt={`Kategori ${title}`}
-        className="absolute inset-0 w-full h-full object-cover"
-        // Fallback jika gambar gagal dimuat
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         onError={(e) => {
           e.target.onerror = null;
           e.target.src =
@@ -20,30 +21,36 @@ const Categorycard = ({ title, description, bgImage }) => {
         }}
       />
 
-      {/* Overlay Gelap Transparan (akan lebih gelap saat hover) */}
-      {/* Opasitas awal 0.5, berubah menjadi 0.8 saat hover */}
-      <div className="absolute inset-0 bg-black opacity-50 group-hover:opacity-80 transition duration-300"></div>
+      {/* Overlay dengan gradient gold-brown */}
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-[var(--color-primary-dark)]/90 
+        via-[var(--color-primary)]/40 to-transparent group-hover:from-[var(--color-primary-dark)]/80 
+        group-hover:via-[var(--color-accent-dark)]/50 group-hover:to-transparent transition-all duration-500"
+      ></div>
 
-      {/* Konten (Judul & Deskripsi) */}
-      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4">
-        {/* Judul Utama (Tersembunyi, Muncul saat Hover) */}
+      {/* Glass Highlight di atas */}
+      <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent"></div>
+
+      {/* Konten */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center">
+        {/* Judul */}
         <h3
-          className="text-white text-xl sm:text-2xl font-extrabold text-center leading-snug 
-          opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 
-          transition-all duration-300"
+          className="text-white text-2xl sm:text-3xl font-extrabold tracking-tight 
+          opacity-100 drop-shadow-md mb-2 transition-all duration-500 group-hover:text-[var(--color-accent)]"
         >
           {title}
         </h3>
 
-        {/* Deskripsi Tambahan (Tersembunyi, Muncul saat Hover) */}
-        {/* Catatan: Kita mengubah posisi default deskripsi ke bawah (translate-y-full) agar efeknya lebih dramatis dari bawah */}
+        {/* Deskripsi muncul dari bawah saat hover */}
         <p
-          className="absolute bottom-0 p-4 text-center text-white text-sm 
-          opacity-0 group-hover:opacity-100 
-          transition-all duration-300 translate-y-full group-hover:translate-y-0"
+          className="text-white/90 text-sm sm:text-base opacity-0 translate-y-4 
+          group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-out max-w-xs"
         >
           {description}
         </p>
+
+        {/* Aksen garis */}
+        <div className="mt-4 h-[3px] w-10 bg-[var(--color-accent)] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
       </div>
     </div>
   );

@@ -6,17 +6,17 @@ const socialLinks = [
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-6 w-6"
-        fill="none"
         viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
       >
         <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586M17 8v5c0 .324-.055.637-.156.924M17 8H8m-2.5 0a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-        />
-        {/* Ikon Instagram (sebagai pengganti, karena ikon asli tidak standar) */}
+          fill="#000"
+          d="M11.999 7.377a4.623 4.623 0 1 0 0 9.248a4.623 4.623 0 0 0 0-9.248m0 7.627a3.004 3.004 0 1 1 0-6.008a3.004 3.004 0 0 1 0 6.008"
+        ></path>
+        <circle cx={16.806} cy={7.207} r={1.078} fill="#000"></circle>
+        <path
+          fill="#000"
+          d="M20.533 6.111A4.6 4.6 0 0 0 17.9 3.479a6.6 6.6 0 0 0-2.186-.42c-.963-.042-1.268-.054-3.71-.054s-2.755 0-3.71.054a6.6 6.6 0 0 0-2.184.42a4.6 4.6 0 0 0-2.633 2.632a6.6 6.6 0 0 0-.419 2.186c-.043.962-.056 1.267-.056 3.71s0 2.753.056 3.71c.015.748.156 1.486.419 2.187a4.6 4.6 0 0 0 2.634 2.632a6.6 6.6 0 0 0 2.185.45c.963.042 1.268.055 3.71.055s2.755 0 3.71-.055a6.6 6.6 0 0 0 2.186-.419a4.6 4.6 0 0 0 2.633-2.633c.263-.7.404-1.438.419-2.186c.043-.962.056-1.267.056-3.71s0-2.753-.056-3.71a6.6 6.6 0 0 0-.421-2.217m-1.218 9.532a5 5 0 0 1-.311 1.688a3 3 0 0 1-1.712 1.711a5 5 0 0 1-1.67.311c-.95.044-1.218.055-3.654.055c-2.438 0-2.687 0-3.655-.055a5 5 0 0 1-1.669-.311a3 3 0 0 1-1.719-1.711a5.1 5.1 0 0 1-.311-1.669c-.043-.95-.053-1.218-.053-3.654s0-2.686.053-3.655a5 5 0 0 1 .311-1.687c.305-.789.93-1.41 1.719-1.712a5 5 0 0 1 1.669-.311c.951-.043 1.218-.055 3.655-.055s2.687 0 3.654.055a5 5 0 0 1 1.67.311a3 3 0 0 1 1.712 1.712a5.1 5.1 0 0 1 .311 1.669c.043.951.054 1.218.054 3.655s0 2.698-.043 3.654z"
+        ></path>
       </svg>
     ),
     text: "@kanesa.library",
@@ -27,17 +27,13 @@ const socialLinks = [
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-6 w-6"
-        fill="none"
         viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
       >
         <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M3 8l7.89 5.263l3.89 2.593L21 8m-10 12l-7 4V8a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-4"
-        />
-        {/* Ikon Email */}
+          fill="#000"
+          d="M20 4H6c-1.103 0-2 .897-2 2v5h2V8l6.4 4.8a1 1 0 0 0 1.2 0L20 8v9h-8v2h8c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2m-7 6.75L6.666 6h12.668z"
+        ></path>
+        <path fill="#000" d="M2 12h7v2H2zm2 3h6v2H4zm3 3h4v2H7z"></path>
       </svg>
     ),
     text: "pusjaka.kanesa@gmail.com",
@@ -48,17 +44,14 @@ const socialLinks = [
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-6 w-6"
-        fill="none"
         viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
       >
         <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M3.055 11.233a10.024 10.024 0 012.333-2.333M7.388 7.388l1.414 1.414M11 5h1a10 10 0 0110 10v1a10 10 0 01-10 10h-1a10 10 0 01-10-10V9a2 2 0 012-2h2"
-        />
-        {/* Ikon Telepon/WhatsApp */}
+          fill="#000"
+          fillRule="evenodd"
+          d="M18.403 5.633A8.92 8.92 0 0 0 12.053 3c-4.948 0-8.976 4.027-8.978 8.977c0 1.582.413 3.126 1.198 4.488L3 21.116l4.759-1.249a9 9 0 0 0 4.29 1.093h.004c4.947 0 8.975-4.027 8.977-8.977a8.93 8.93 0 0 0-2.627-6.35m-6.35 13.812h-.003a7.45 7.45 0 0 1-3.798-1.041l-.272-.162l-2.824.741l.753-2.753l-.177-.282a7.45 7.45 0 0 1-1.141-3.971c.002-4.114 3.349-7.461 7.465-7.461a7.4 7.4 0 0 1 5.275 2.188a7.42 7.42 0 0 1 2.183 5.279c-.002 4.114-3.349 7.462-7.461 7.462m4.093-5.589c-.225-.113-1.327-.655-1.533-.73s-.354-.112-.504.112s-.58.729-.711.879s-.262.168-.486.056s-.947-.349-1.804-1.113c-.667-.595-1.117-1.329-1.248-1.554s-.014-.346.099-.458c.101-.1.224-.262.336-.393s.149-.224.224-.374s.038-.281-.019-.393c-.056-.113-.505-1.217-.692-1.666c-.181-.435-.366-.377-.504-.383a10 10 0 0 0-.429-.008a.83.83 0 0 0-.599.28c-.206.225-.785.767-.785 1.871s.804 2.171.916 2.321s1.582 2.415 3.832 3.387c.536.231.954.369 1.279.473c.537.171 1.026.146 1.413.089c.431-.064 1.327-.542 1.514-1.066s.187-.973.131-1.067s-.207-.151-.43-.263"
+          clipRule="evenodd"
+        ></path>
       </svg>
     ),
     text: "Saluran Whatsapp",
@@ -68,44 +61,30 @@ const socialLinks = [
 
 function Footer() {
   return (
-    <footer className="bg-white pt-16 border-t border-gray-100 bottom-0">
-      <div className="container mx-auto px-4 max-w-6xl">
-        {/* Bagian Atas: Deskripsi dan Kontak */}
-        <div className="flex flex-col md:flex-row justify-between pb-12 gap-10">
-          {/* Kolom Kiri: Logo & Deskripsi */}
-          <div className="w-full md:w-3/5 lg:w-2/5">
-            <div className="flex items-center mb-4">
-              {/* Placeholder Logo Buku - Gunakan SVG atau Gambar Asli Anda */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-10 w-10 text-amber-800 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 6.253v13m0-13C10.832 5.477 9.205 5 7.5 5A2.5 2.5 0 005 7.5c0 1.348.835 2.529 2.074 3.013M12 6.253C13.168 5.477 14.795 5 16.5 5A2.5 2.5 0 0119 7.5c0 1.348-.835 2.529-2.074 3.013M12 12h.01M12 19.253v-2.677M12 19.253c-1.168.776-2.694 1.246-4.253.978M12 19.253c1.168.776 2.694 1.246 4.253.978"
-                />
-              </svg>
-              <span className="text-xl font-bold text-gray-800 leading-tight">
+    <footer className="bg-[var(--color-primary-dark)] text-white pt-16 border-t border-[var(--color-primary)]/20">
+      <div className="container mx-auto px-6 max-w-6xl">
+        {/* Atas */}
+        <div className="flex flex-col md:flex-row justify-between gap-12 pb-12">
+          {/* Kiri: Deskripsi */}
+          <div className="w-full md:w-3/5">
+            <div className="flex items-center mb-4 gap-3">
+              <img
+                src="library.svg"
+                alt="Logo"
+                className="w-10 h-10 bg-white/90 rounded-lg p-1"
+              />
+              <span className="text-xl font-bold leading-tight text-[var(--color-accent)]">
                 PERPUSTAKAAN DIGITAL <br /> SMKN 1 Kepanjen
               </span>
             </div>
-            <p className="text-sm text-gray-600 leading-relaxed max-w-lg">
-              Perpustakaan Digital SMKN 1 Kepanjen ada untuk menjembatani
-              kebutuhan baca siswa dengan dunia pengetahuan digital. Kami
-              menyediakan koleksi buku, artikel, dan sumber belajar yang mudah
-              diakses, mendukung belajar yang sehat, cerdas, dan berkelanjutan.
-              Kami merayakan kekayaan ilmu dari berbagai bidang dan
-              menyajikannya jadi bacaan yang menambah wawasan, menumbuhkan
-              kreativitas, dan mendukung pendidikan yang lebih baik.
+            <p className="text-sm text-[var(--color-accent-bg)] leading-relaxed max-w-lg">
+              Kami menjembatani semangat membaca siswa dengan dunia digital.
+              Koleksi kami membuka wawasan, menumbuhkan kreativitas, dan
+              mendukung pendidikan yang berkelanjutan.
             </p>
           </div>
 
-          {/* Kolom Kanan: Kontak Sosial */}
+          {/* Kanan: Sosial */}
           <div className="w-full md:w-2/5 lg:w-1/3">
             <ul className="space-y-4">
               {socialLinks.map((item, index) => (
@@ -114,13 +93,14 @@ function Footer() {
                     href={item.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center text-gray-700 hover:text-orange-500 transition duration-150"
+                    className="flex items-center gap-3 hover:translate-x-1 transition-transform duration-200"
                   >
-                    {/* Lingkaran Ikon Oranye */}
-                    <span className="p-3 mr-4 bg-orange-400 rounded-full text-white shadow-md">
+                    <span className="p-3 bg-[var(--color-accent)] text-[var(--color-primary-dark)] rounded-full shadow-md text-lg">
                       {item.icon}
                     </span>
-                    <span className="font-medium">{item.text}</span>
+                    <span className="text-[var(--color-accent-bg)] hover:text-white transition">
+                      {item.text}
+                    </span>
                   </a>
                 </li>
               ))}
@@ -128,11 +108,17 @@ function Footer() {
           </div>
         </div>
 
-        {/* Bagian Bawah: Hak Cipta */}
-        <div className="text-center border-t border-gray-100 pt-6 pb-8 mt-4">
-          <p className="text-xs text-gray-500">
-            Hak Cipta © 2025 Perpustakaan Digital Kanesa | Dikembangkan oleh
-            Teamverse | Dikelola oleh Pustakawan Remaja Kanesa
+        {/* Bawah */}
+        <div className="text-center border-t border-[var(--color-accent)]/20 pt-6 pb-8 mt-4">
+          <p className="text-xs text-[var(--color-accent-bg)]">
+            © 2025 Perpustakaan Digital Kanesa | Dikembangkan oleh{" "}
+            <span className="text-[var(--color-accent)] font-medium">
+              TempVerse
+            </span>{" "}
+            | Dikelola oleh{" "}
+            <span className="text-[var(--color-accent)] font-medium">
+              Pustakawan Remaja Kanesa
+            </span>
           </p>
         </div>
       </div>
