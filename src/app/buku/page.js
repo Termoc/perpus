@@ -1,3 +1,5 @@
+"use client";
+import React from "react";
 import Categorycard from "@/components/Categorycard";
 
 const categories = [
@@ -5,8 +7,7 @@ const categories = [
     title: "Paket Pelajaran",
     description:
       "Kumpulan buku panduan dan materi pelajaran lengkap untuk mendukung kegiatan belajar mengajar di sekolah.",
-    bgImage:
-      "https://images.unsplash.com/photo-1524995997946-a1c2e315a714?fit=crop&w=500&h=700",
+    bgImage: "/books/mider.png",
   },
   {
     title: "Filsafat dan Psikologi",
@@ -47,19 +48,24 @@ const categories = [
 
 function Buku() {
   return (
-    <section className="py-16 md:py-24 bg-white">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 text-center mb-12">
-          Daftar Buku Berdasarkan Kategori
+    <section className="relative py-20 md:py-28 bg-[var(--color-surface-alt)] overflow-hidden">
+      {/* Ornamen background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary-light)]/10 via-transparent to-[var(--color-accent-bg)]/15"></div>
+
+      <div className="relative container mx-auto px-6 max-w-6xl text-center">
+        {/* Judul Halaman */}
+        <h2 className="text-3xl md:text-4xl font-extrabold text-[var(--color-primary-dark)] mb-16 drop-shadow-sm">
+          Daftar Buku Berdasarkan{" "}
+          <span className="text-[var(--color-accent)]">Kategori</span>
         </h2>
 
         {/* Grid Kategori */}
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-3 md:gap-8 lg:gap-10 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-10">
           {categories.map((category, index) => (
             <Categorycard
               key={index}
               title={category.title}
-              description={category.description} // Meneruskan deskripsi
+              description={category.description}
               bgImage={category.bgImage}
             />
           ))}
