@@ -10,6 +10,11 @@ export function verifyToken(req, requireLibrarian = true) {
     console.log("Bearer:", token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    // ✅ TAMBAHKAN INI
+    console.log("Decoded token:", decoded);
+    console.log("User role:", decoded.role);
+    console.log("Require librarian:", requireLibrarian);
+
     if (
       requireLibrarian &&
       decoded.role !== "librarian" &&
@@ -20,6 +25,7 @@ export function verifyToken(req, requireLibrarian = true) {
 
     return decoded;
   } catch (err) {
+    console.error("❌ Verify Token Error:", err.message); // ✅ TAMBAHKAN INI
     throw new Error(err.message || "Token tidak valid");
   }
 }

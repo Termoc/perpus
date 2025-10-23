@@ -5,8 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -28,12 +27,15 @@ model Book {
   title     String
   author    String
   year      Int
-  category  String
-  cover     String?   // URL gambar cover
-  redirectType   String   // "link" atau "pdf"
-  redirectTarget String   // URL link atau path file PDF
-  createdAt DateTime  @default(now())
+  cover     String?
+  redirectType   String
+  redirectTarget String?
+  createdAt DateTime @default(now())
+
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id])
 }
+
 
 model Article {
   id        Int      @id @default(autoincrement())
@@ -42,4 +44,10 @@ model Article {
   image     String?
   content   String
   createdAt DateTime @default(now())
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  books Book[]
 }
