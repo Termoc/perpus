@@ -1,11 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Eye, Trash2, BookPlus } from "lucide-react";
 
 export default function BookManager() {
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [books, setBooks] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState({});
-  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     title: "",
     author: "",
@@ -26,23 +29,64 @@ export default function BookManager() {
     "Sains dan Teknologi Terapan",
   ];
 
-  // === Ambil daftar buku ===
+  // === Fetch Buku ===
+  const fetchBooks = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/books", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok || !Array.isArray(data))
+        throw new Error(data.error || "Gagal memuat data");
+      setBooks(data);
+    } catch (err) {
+      console.error("❌ fetchBooks:", err);
+      setBooks([]);
+    }
+  };
+
   useEffect(() => {
-    fetch("/api/books")
-      .then((res) => res.json())
-      .then(setBooks)
-      .catch((err) => console.error("Gagal ambil buku:", err));
+    fetchBooks();
   }, []);
 
+  // === Delete buku ===
+  const handleDeleteClick = (book) => {
+    setSelectedBook(book);
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedBook) return;
+    setIsDeleting(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`/api/books/${selectedBook.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal menghapus buku");
+      alert("✅ Buku berhasil dihapus!");
+      fetchBooks();
+    } catch (err) {
+      alert("❌ " + err.message);
+    } finally {
+      setIsDeleting(false);
+      setShowConfirm(false);
+      setSelectedBook(null);
+    }
+  };
+
+  // === Input & Upload ===
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  // === Upload File ke Supabase ===
   const handleUpload = async (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
-
     setUploading({ ...uploading, [type]: true });
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("folder", type === "redirectTarget" ? "pdf" : "cover");
@@ -54,11 +98,8 @@ export default function BookManager() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Upload gagal");
-
-      // Kalau type === 'pdf', arahkan ke redirectTarget
       const field = type === "pdf" ? "redirectTarget" : type;
       setForm({ ...form, [field]: data.url });
-
       alert(`✅ ${type === "cover" ? "Cover" : "PDF"} berhasil diunggah!`);
     } catch (err) {
       alert("❌ " + err.message);
@@ -67,28 +108,17 @@ export default function BookManager() {
     }
   };
 
-  // === Simpan Buku ===
+  // === Submit ===
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const dataToSend = { ...form };
-
-    // Validasi tahun
-    if (dataToSend.year) {
-      const yearInt = parseInt(dataToSend.year, 10);
-      if (!isNaN(yearInt)) {
-        dataToSend.year = yearInt;
-      } else {
-        alert("❌ Tahun yang dimasukkan tidak valid.");
-        return;
-      }
+    const dataToSend = { ...form, year: parseInt(form.year, 10) };
+    if (isNaN(dataToSend.year)) {
+      alert("❌ Tahun tidak valid");
+      return;
     }
-    console.log("📚 Books:", books);
 
     try {
       const token = localStorage.getItem("token");
-      console.log("🔍 Token:", token);
-
       const res = await fetch("/api/books", {
         method: "POST",
         headers: {
@@ -97,13 +127,19 @@ export default function BookManager() {
         },
         body: JSON.stringify(dataToSend),
       });
-
       const data = await res.json();
-      console.log("📦 Response data:", data);
-
       if (!res.ok) throw new Error(data.error || "Gagal tambah buku");
       alert("✅ Buku berhasil ditambahkan!");
-      location.reload();
+      setForm({
+        title: "",
+        author: "",
+        year: "",
+        category: "",
+        cover: "",
+        redirectType: "link",
+        redirectTarget: "",
+      });
+      fetchBooks();
     } catch (err) {
       alert("❌ " + err.message);
     }
@@ -125,43 +161,67 @@ export default function BookManager() {
               <th className="p-3 text-left">Penulis</th>
               <th className="p-3 text-left">Kategori</th>
               <th className="p-3 text-left">Redirect</th>
+              <th className="p-3 text-left">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            {books.map((b) => (
-              <tr
-                key={b.id}
-                className="border-t hover:bg-[var(--color-surface)]/40 transition"
-              >
-                <td className="p-3">
-                  {b.cover ? (
-                    <img
-                      src={b.cover}
-                      alt={b.title}
-                      className="w-12 h-16 object-cover rounded"
-                    />
-                  ) : (
-                    "—"
-                  )}
-                </td>
-                <td className="p-3 font-semibold">{b.title}</td>
-                <td className="p-3">{b.author}</td>
-                <td className="p-3">{b.category?.name || "—"}</td>
-                <td className="p-3">
-                  {b.redirectTarget ? (
-                    <a
-                      href={b.redirectTarget}
-                      target="_blank"
-                      className="text-[var(--color-accent-dark)] underline"
+            {books.length > 0 ? (
+              books.map((b) => (
+                <tr
+                  key={b.id}
+                  className="border-t hover:bg-[var(--color-surface)]/40 transition"
+                >
+                  <td className="p-3">
+                    {b.cover ? (
+                      <div className="relative w-12 h-16">
+                        <Image
+                          src={b.cover}
+                          alt={b.title}
+                          fill
+                          className="object-cover rounded"
+                          sizes="48px"
+                        />
+                      </div>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                  <td className="p-3 font-semibold">{b.title}</td>
+                  <td className="p-3">{b.author}</td>
+                  <td className="p-3">{b.category?.name || "—"}</td>
+                  <td className="p-3">
+                    {b.redirectTarget ? (
+                      <Link
+                        href={b.redirectTarget}
+                        target="_blank"
+                        className="text-[var(--color-accent-dark)] underline"
+                      >
+                        {b.redirectType === "pdf"
+                          ? "Lihat PDF"
+                          : "Kunjungi Link"}
+                      </Link>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                  <td className="p-3">
+                    <button
+                      onClick={() => handleDeleteClick(b)}
+                      className="text-red-600 hover:text-red-800 font-bold flex items-center gap-2"
                     >
-                      {b.redirectType === "pdf" ? "Lihat PDF" : "Kunjungi Link"}
-                    </a>
-                  ) : (
-                    "—"
-                  )}
+                      <Trash2 size={18} />
+                      Hapus
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="text-center py-4 text-gray-500">
+                  Tidak ada data buku
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
@@ -177,6 +237,7 @@ export default function BookManager() {
           placeholder="Judul Buku"
           className="p-3 rounded-md border border-[var(--color-primary-light)]/20"
           onChange={handleChange}
+          value={form.title}
           required
         />
         <input
@@ -185,6 +246,7 @@ export default function BookManager() {
           placeholder="Penulis"
           className="p-3 rounded-md border border-[var(--color-primary-light)]/20"
           onChange={handleChange}
+          value={form.author}
           required
         />
         <input
@@ -193,6 +255,7 @@ export default function BookManager() {
           placeholder="Tahun"
           className="p-3 rounded-md border border-[var(--color-primary-light)]/20"
           onChange={handleChange}
+          value={form.year}
           required
         />
 
@@ -221,11 +284,15 @@ export default function BookManager() {
             disabled={uploading.cover}
           />
           {form.cover && (
-            <img
-              src={form.cover}
-              alt="Preview"
-              className="mt-2 w-24 h-32 object-cover rounded"
-            />
+            <div className="relative mt-2 w-24 h-32">
+              <Image
+                src={form.cover}
+                alt="Preview Cover"
+                fill
+                className="object-cover rounded"
+                sizes="96px"
+              />
+            </div>
           )}
         </div>
 
@@ -253,12 +320,12 @@ export default function BookManager() {
           </label>
         </div>
 
-        {/* Input sesuai pilihan */}
+        {/* Redirect Input */}
         {form.redirectType === "link" ? (
           <input
             type="url"
             name="redirectTarget"
-            placeholder="Masukkan URL eksternal (Google Drive, Website, dsb)"
+            placeholder="Masukkan URL eksternal"
             className="col-span-full p-3 rounded-md border border-[var(--color-primary-light)]/20"
             onChange={handleChange}
             value={form.redirectTarget}
@@ -274,24 +341,55 @@ export default function BookManager() {
               disabled={uploading.pdf}
             />
             {form.redirectTarget && (
-              <a
+              <Link
                 href={form.redirectTarget}
                 target="_blank"
-                className="text-[var(--color-accent-dark)] underline mt-2 block"
+                className="text-[var(--color-accent-dark)] underline mt-2 flex items-center gap-1"
               >
-                📄 Lihat PDF
-              </a>
+                <Eye size={16} /> Lihat PDF
+              </Link>
             )}
           </div>
         )}
 
         <button
           type="submit"
-          className="col-span-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold py-3 rounded-md transition-all duration-300"
+          className="col-span-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold py-3 rounded-md transition-all duration-300 flex justify-center items-center gap-3"
         >
-          Tambah Buku 📘
+          Tambah Buku <BookPlus />
         </button>
       </form>
+
+      {/* === Modal Konfirmasi Hapus === */}
+      {showConfirm && selectedBook && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white/90 backdrop-blur-lg p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center border border-gray-200">
+            <h3 className="text-xl font-bold mb-3 text-gray-900">
+              Hapus Buku?
+            </h3>
+            <p className="mb-6 text-gray-700">
+              Buku <strong>{selectedBook.title}</strong> akan dihapus secara
+              permanen. Apakah kamu yakin?
+            </p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-5 rounded-lg transition duration-300"
+                disabled={isDeleting}
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-5 rounded-lg transition duration-300"
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Menghapus..." : "Ya, Hapus"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

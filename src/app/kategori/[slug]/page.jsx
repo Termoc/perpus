@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import Bookcard from "@/components/Bookcard";
 
 export default function KategoriDetail() {
-  const { slug } = useParams(); // misal: teknologi, sains, dll
+  const { slug } = useParams();
   const decodedSlug = decodeURIComponent(slug);
   const formatted = decodedSlug
     .replace(/-/g, " ")
@@ -19,32 +19,57 @@ export default function KategoriDetail() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   // === Fetch buku berdasarkan kategori ===
   useEffect(() => {
     const fetchBooks = async () => {
+      setLoading(true);
+      setErrorMsg(null);
       try {
-        const res = await fetch(`/api/books?category=${slug}`);
+        const token =
+          typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+        const res = await fetch(`/api/books?category=${slug}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+
         const data = await res.json();
+
+        if (!res.ok || !Array.isArray(data)) {
+          console.error("❌ Gagal ambil data:", data);
+          setErrorMsg(data.error || "Tidak dapat memuat data buku.");
+          setBooks([]);
+          return;
+        }
+
         setBooks(data);
       } catch (err) {
         console.error("❌ Gagal ambil buku:", err);
+        setErrorMsg("Terjadi kesalahan koneksi ke server.");
       } finally {
         setLoading(false);
       }
     };
+
     fetchBooks();
   }, [slug]);
 
   const filteredBooks = useMemo(() => {
-    return books
-      .filter((book) =>
-        book.title.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .sort((a, b) => {
-        if (sortOrder === "asc") return a.title.localeCompare(b.title);
-        return b.title.localeCompare(a.title);
-      });
+    if (!Array.isArray(books)) return [];
+
+    let result = books.filter((book) =>
+      book.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Terapkan urutan sesuai dropdown
+    if (sortOrder === "asc") {
+      result.sort((a, b) => a.title.localeCompare(b.title));
+    } else {
+      result.sort((a, b) => b.title.localeCompare(a.title));
+    }
+
+    return result;
   }, [books, searchTerm, sortOrder]);
 
   return (
@@ -80,6 +105,10 @@ export default function KategoriDetail() {
         {loading ? (
           <p className="text-center text-[var(--color-text-muted)] mt-12 animate-pulse">
             ⏳ Memuat buku...
+          </p>
+        ) : errorMsg ? (
+          <p className="text-center text-[var(--color-danger)] mt-12">
+            ⚠️ {errorMsg}
           </p>
         ) : filteredBooks.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">

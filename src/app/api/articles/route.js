@@ -27,3 +27,27 @@ export async function POST(req) {
     return Response.json({ error: err.message }, { status: 401 });
   }
 }
+
+// === DELETE ===
+export async function DELETE(req, { params }) {
+  try {
+    const user = await verifyToken(req, true);
+    const { id } = params;
+
+    const article = await prisma.article.findUnique({
+      where: { id: parseInt(id) },
+    });
+    if (!article) {
+      return Response.json(
+        { error: "Artikel tidak ditemukan." },
+        { status: 404 }
+      );
+    }
+
+    await prisma.article.delete({ where: { id: parseInt(id) } });
+    return Response.json({ message: "Artikel berhasil dihapus." });
+  } catch (err) {
+    console.error("❌ Error DELETE article:", err.message);
+    return Response.json({ error: err.message }, { status: 401 });
+  }
+}

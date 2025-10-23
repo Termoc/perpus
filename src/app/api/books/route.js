@@ -1,39 +1,49 @@
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "../_utils/auth";
 
+// === GET ===
 export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-  const categorySlug = searchParams.get("category");
+  try {
+    // Cek apakah ada token, tapi jangan wajib
+    let user = null;
+    try {
+      user = await verifyToken(req);
+    } catch {
+      // Abaikan error token — tetap lanjut untuk akses publik
+    }
 
-  if (categorySlug) {
-    // convert slug "sastra-dan-bahasa" -> "sastra dan bahasa"
-    const categoryName = categorySlug
-      .replace(/-/g, " ")
-      .replace(/,/g, "")
-      .toLowerCase();
+    const { searchParams } = new URL(req.url);
+    const categorySlug = searchParams.get("category");
 
-    const booksByCategory = await prisma.book.findMany({
-      where: {
-        category: {
-          name: {
-            contains: categoryName,
-            mode: "insensitive",
+    // Filter berdasarkan kategori (jika ada)
+    if (categorySlug) {
+      const categoryName = categorySlug
+        .replace(/-/g, " ")
+        .replace(/,/g, "")
+        .toLowerCase();
+
+      const booksByCategory = await prisma.book.findMany({
+        where: {
+          category: {
+            name: { contains: categoryName, mode: "insensitive" },
           },
         },
-      },
-      include: { category: true },
-    });
+        include: { category: true },
+      });
 
-    return Response.json(booksByCategory);
+      return Response.json(booksByCategory);
+    }
+
+    // Semua buku
+    const books = await prisma.book.findMany({ include: { category: true } });
+    return Response.json(books);
+  } catch (err) {
+    console.error("❌ Error di GET books:", err);
+    return Response.json({ error: err.message }, { status: 500 });
   }
-
-  // default: semua buku
-  const books = await prisma.book.findMany({
-    include: { category: true },
-  });
-  return Response.json(books);
 }
 
+// === POST ===
 export async function POST(req) {
   try {
     const user = await verifyToken(req);
@@ -53,7 +63,6 @@ export async function POST(req) {
       return Response.json({ error: "Tahun tidak valid." }, { status: 400 });
     }
 
-    // Pastikan kategori ada, atau buat baru
     const existingCategory = await prisma.category.upsert({
       where: { name: category },
       update: {},
@@ -79,6 +88,25 @@ export async function POST(req) {
     );
   } catch (err) {
     console.error("❌ Error di POST books:", err);
+    return Response.json({ error: err.message }, { status: 401 });
+  }
+}
+
+// === DELETE ===
+export async function DELETE(req, { params }) {
+  try {
+    const user = await verifyToken(req, true);
+    const { id } = params;
+
+    const book = await prisma.book.findUnique({ where: { id: parseInt(id) } });
+    if (!book) {
+      return Response.json({ error: "Buku tidak ditemukan." }, { status: 404 });
+    }
+
+    await prisma.book.delete({ where: { id: parseInt(id) } });
+    return Response.json({ message: "Buku berhasil dihapus." });
+  } catch (err) {
+    console.error("❌ Error DELETE book:", err.message);
     return Response.json({ error: err.message }, { status: 401 });
   }
 }

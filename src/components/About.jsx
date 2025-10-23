@@ -1,8 +1,16 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 
-function About() {
+export default function About() {
   const imageUrl = "/images/anggota.png";
+
+  const handleJoin = () => {
+    // Contoh aksi lebih user-friendly
+    if (confirm("Ingin membuka formulir pendaftaran Pusjaka?")) {
+      window.open("https://forms.gle/contohFormPusjaka", "_blank");
+    }
+  };
 
   return (
     <section className="relative bg-[var(--color-surface-alt)] py-20 md:py-28 overflow-hidden">
@@ -17,14 +25,15 @@ function About() {
               {/* Layer 3D belakang */}
               <div className="absolute inset-0 bg-[var(--color-primary)] rounded-2xl shadow-lg transform rotate-3 group-hover:rotate-0 group-hover:translate-x-3 group-hover:-translate-y-3 transition-all duration-500 ease-in-out"></div>
 
-              {/* Gambar utama */}
-              <img
+              {/* Gambar utama dengan next/image */}
+              <Image
                 src={imageUrl}
                 alt="Kelompok Pusjaka"
-                className="relative w-full h-full object-cover rounded-2xl shadow-xl transition-transform duration-500 group-hover:scale-105"
+                fill
+                className="relative object-cover rounded-2xl shadow-xl transition-transform duration-500 group-hover:scale-105"
+                priority={false}
                 onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
+                  e.currentTarget.src =
                     "https://placehold.co/400x500/A0A0A0/ffffff?text=Pusjaka";
                 }}
               />
@@ -45,9 +54,7 @@ function About() {
             </p>
 
             <button
-              onClick={() =>
-                alert("Anda akan diarahkan ke formulir pendaftaran Pusjaka.")
-              }
+              onClick={handleJoin}
               className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-[var(--color-primary-dark)] font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 hover:scale-105 focus:ring-4 focus:ring-[var(--color-accent)]/40"
             >
               Daftar Sekarang
@@ -58,5 +65,3 @@ function About() {
     </section>
   );
 }
-
-export default About;
