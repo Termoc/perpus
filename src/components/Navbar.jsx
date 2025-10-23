@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import Searchbar from "./Searchbar";
+import Link from "next/link";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -39,7 +40,7 @@ const Navbar = () => {
 
           {/* Logo + Text */}
           <div className="flex items-center bg-white/90 rounded-xl px-3 py-2 shadow-sm border border-[var(--color-primary)]/10">
-            <img src="library.svg" alt="logo" className="w-8 h-8 mr-2" />
+            <img src="/library.svg" alt="logo" className="w-8 h-8 mr-2" />
             <div className="leading-tight">
               <p className="text-[var(--color-primary)] font-bold text-sm">
                 PERPUSTAKAAN DIGITAL
@@ -69,24 +70,26 @@ const Navbar = () => {
             <X size={24} />
           </button>
         </div>
-
         {/* Isi sidebar */}
         <ul className="flex flex-col gap-2 p-4">
-          {["Beranda", "Daftar Buku", "Artikel", "Pustakawan"].map(
-            (item, i) => (
-              <li
-                key={i}
-                className="p-2 rounded-md hover:bg-[var(--color-accent-bg)] transition-all"
+          {[
+            { name: "Beranda", path: "/" },
+            { name: "Daftar Buku", path: "/kategori" },
+            { name: "Artikel", path: "/artikel" },
+            { name: "Pustakawan", path: "/admin" },
+          ].map((item, i) => (
+            <li
+              key={i}
+              className="p-2 rounded-md hover:bg-[var(--color-accent-bg)] transition-all"
+            >
+              <Link
+                href={item.path}
+                className="flex items-center text-[var(--color-primary-dark)] font-medium hover:text-[var(--color-accent-dark)]"
               >
-                <a
-                  href="#"
-                  className="flex items-center text-[var(--color-primary-dark)] font-medium hover:text-[var(--color-accent-dark)]"
-                >
-                  {item}
-                </a>
-              </li>
-            )
-          )}
+                {item.name}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
 

@@ -56,7 +56,7 @@ function Suggestion() {
       <div className="relative container mx-auto px-6 max-w-6xl">
         {/* Judul */}
         <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-16 text-[var(--color-primary-dark)]">
-          Rekomendasi Untuk Kamu ✨
+          Rekomendasi Untuk Kamu
         </h2>
 
         {/* Buku */}

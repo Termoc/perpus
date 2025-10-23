@@ -69,7 +69,7 @@ function Footer() {
           <div className="w-full md:w-3/5">
             <div className="flex items-center mb-4 gap-3">
               <img
-                src="library.svg"
+                src="/library.svg"
                 alt="Logo"
                 className="w-10 h-10 bg-white/90 rounded-lg p-1"
               />
