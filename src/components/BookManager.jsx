@@ -3,25 +3,30 @@ import React, { useEffect, useState } from "react";
 
 export default function BookManager() {
   const [books, setBooks] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     title: "",
     author: "",
     year: "",
     category: "",
+    cover: "",
     redirectType: "link",
     redirectTarget: "",
   });
   const [uploading, setUploading] = useState({ cover: false, pdf: false });
 
   const categories = [
-    "Fiksi",
-    "Non-Fiksi",
-    "Teknologi",
-    "Sains",
-    "Sejarah",
-    "Pendidikan",
+    "Filsafat dan Psikologi",
+    "Sejarah dan Biografi",
+    "Budaya, Agama, dan Sosial",
+    "Sastra dan Bahasa",
+    "Seni dan Kreativitas",
+    "Sains dan Teknologi Terapan",
   ];
 
+  // === Ambil daftar buku ===
   useEffect(() => {
     fetch("/api/books")
       .then((res) => res.json())
@@ -40,7 +45,7 @@ export default function BookManager() {
     setUploading({ ...uploading, [type]: true });
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("folder", type);
+    formData.append("folder", type === "redirectTarget" ? "pdf" : "cover");
 
     try {
       const res = await fetch("/api/upload", {
@@ -50,7 +55,10 @@ export default function BookManager() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Upload gagal");
 
-      setForm({ ...form, [type]: data.url });
+      // Kalau type === 'pdf', arahkan ke redirectTarget
+      const field = type === "pdf" ? "redirectTarget" : type;
+      setForm({ ...form, [field]: data.url });
+
       alert(`✅ ${type === "cover" ? "Cover" : "PDF"} berhasil diunggah!`);
     } catch (err) {
       alert("❌ " + err.message);
@@ -62,17 +70,38 @@ export default function BookManager() {
   // === Simpan Buku ===
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const dataToSend = { ...form };
+
+    // Validasi tahun
+    if (dataToSend.year) {
+      const yearInt = parseInt(dataToSend.year, 10);
+      if (!isNaN(yearInt)) {
+        dataToSend.year = yearInt;
+      } else {
+        alert("❌ Tahun yang dimasukkan tidak valid.");
+        return;
+      }
+    }
+    console.log("📚 Books:", books);
+
     try {
       const token = localStorage.getItem("token");
+      console.log("🔍 Token:", token);
+
       const res = await fetch("/api/books", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(dataToSend),
       });
-      if (!res.ok) throw new Error("Gagal tambah buku");
+
+      const data = await res.json();
+      console.log("📦 Response data:", data);
+
+      if (!res.ok) throw new Error(data.error || "Gagal tambah buku");
       alert("✅ Buku berhasil ditambahkan!");
       location.reload();
     } catch (err) {
@@ -86,6 +115,7 @@ export default function BookManager() {
         Daftar Buku
       </h2>
 
+      {/* === Tabel Buku === */}
       <div className="overflow-x-auto mb-8">
         <table className="w-full border border-[var(--color-primary-light)]/20 rounded-lg overflow-hidden text-sm">
           <thead className="bg-[var(--color-accent-bg)] text-[var(--color-primary-dark)]">
@@ -94,7 +124,7 @@ export default function BookManager() {
               <th className="p-3 text-left">Judul</th>
               <th className="p-3 text-left">Penulis</th>
               <th className="p-3 text-left">Kategori</th>
-              <th className="p-3 text-left">PDF</th>
+              <th className="p-3 text-left">Redirect</th>
             </tr>
           </thead>
           <tbody>
@@ -116,15 +146,15 @@ export default function BookManager() {
                 </td>
                 <td className="p-3 font-semibold">{b.title}</td>
                 <td className="p-3">{b.author}</td>
-                <td className="p-3">{b.category}</td>
+                <td className="p-3">{b.category?.name || "—"}</td>
                 <td className="p-3">
-                  {b.pdf ? (
+                  {b.redirectTarget ? (
                     <a
-                      href={b.pdf}
+                      href={b.redirectTarget}
                       target="_blank"
                       className="text-[var(--color-accent-dark)] underline"
                     >
-                      Lihat PDF
+                      {b.redirectType === "pdf" ? "Lihat PDF" : "Kunjungi Link"}
                     </a>
                   ) : (
                     "—"
@@ -136,6 +166,7 @@ export default function BookManager() {
         </table>
       </div>
 
+      {/* === Form Tambah Buku === */}
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-4"
@@ -198,7 +229,7 @@ export default function BookManager() {
           )}
         </div>
 
-        {/* Pilihan redirect */}
+        {/* Pilihan Redirect */}
         <div className="col-span-full flex gap-6 items-center">
           <label className="flex items-center gap-2">
             <input
@@ -227,7 +258,7 @@ export default function BookManager() {
           <input
             type="url"
             name="redirectTarget"
-            placeholder="Masukkan URL link eksternal (misal Google Drive, website, dsb)"
+            placeholder="Masukkan URL eksternal (Google Drive, Website, dsb)"
             className="col-span-full p-3 rounded-md border border-[var(--color-primary-light)]/20"
             onChange={handleChange}
             value={form.redirectTarget}
@@ -239,8 +270,8 @@ export default function BookManager() {
             <input
               type="file"
               accept="application/pdf"
-              onChange={(e) => handleUpload(e, "redirectTarget")}
-              disabled={uploading?.redirectTarget}
+              onChange={(e) => handleUpload(e, "pdf")}
+              disabled={uploading.pdf}
             />
             {form.redirectTarget && (
               <a
@@ -253,6 +284,7 @@ export default function BookManager() {
             )}
           </div>
         )}
+
         <button
           type="submit"
           className="col-span-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold py-3 rounded-md transition-all duration-300"
