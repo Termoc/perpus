@@ -3,30 +3,66 @@ import { verifyToken } from "../../_utils/auth";
 
 const prisma = new PrismaClient();
 
-// === UPDATE ===
-export async function PUT(req, { params }) {
-  try {
-    const user = verifyToken(req);
-    const data = await req.json();
-
-    const updated = await prisma.book.update({
-      where: { id: parseInt(params.id) },
-      data,
-    });
-
-    return Response.json({ message: "Buku diperbarui", updated });
-  } catch (err) {
-    return Response.json({ error: err.message }, { status: 401 });
-  }
-}
-
 // === DELETE ===
 export async function DELETE(req, { params }) {
   try {
-    const user = verifyToken(req);
-    await prisma.book.delete({ where: { id: parseInt(params.id) } });
-    return Response.json({ message: "Buku dihapus" });
+    const user = await verifyToken(req);
+    const { id } = params;
+
+    await prisma.book.delete({ where: { id: parseInt(id) } });
+    return Response.json({ message: "Buku berhasil dihapus." });
   } catch (err) {
-    return Response.json({ error: err.message }, { status: 401 });
+    console.error("❌ Error DELETE book:", err);
+    return Response.json({ error: err.message }, { status: 400 });
+  }
+}
+
+// === UPDATE ===
+export async function PUT(req, { params }) {
+  try {
+    const user = await verifyToken(req);
+    const { id } = params;
+    const body = await req.json();
+
+    const {
+      title,
+      author,
+      year,
+      cover,
+      category,
+      redirectType,
+      redirectTarget,
+    } = body;
+    const yearInt = parseInt(year, 10);
+
+    // cari atau buat kategori baru kalau ada perubahan
+    let categoryConnect = undefined;
+    if (category) {
+      const cat = await prisma.category.upsert({
+        where: { name: category },
+        update: {},
+        create: { name: category },
+      });
+      categoryConnect = { connect: { id: cat.id } };
+    }
+
+    const updated = await prisma.book.update({
+      where: { id: parseInt(id) },
+      data: {
+        title,
+        author,
+        year: yearInt,
+        cover,
+        redirectType,
+        redirectTarget,
+        ...(categoryConnect && { category: categoryConnect }),
+      },
+      include: { category: true },
+    });
+
+    return Response.json({ message: "Buku berhasil diperbarui.", updated });
+  } catch (err) {
+    console.error("❌ Error PUT book:", err);
+    return Response.json({ error: err.message }, { status: 400 });
   }
 }

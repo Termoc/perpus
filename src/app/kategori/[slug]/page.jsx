@@ -1,45 +1,43 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
 import Bookcard from "@/components/Bookcard";
 
-const sampleBooks = [
-  {
-    title: "Pemrograman Web Modern",
-    cover: "/books/web-modern.png",
-    details: ["Penulis: Andi Firmansyah", "Tahun: 2021"],
-  },
-  {
-    title: "Belajar React dari Nol",
-    cover: "/books/react.png",
-    details: ["Penulis: Wahyu Pratama", "Tahun: 2023"],
-  },
-  {
-    title: "Dasar-dasar Jaringan Komputer",
-    cover: "/books/network.png",
-    details: ["Penulis: Rudi Santoso", "Tahun: 2019"],
-  },
-  {
-    title: "Algoritma dan Struktur Data",
-    cover: "/books/algodata.png",
-    details: ["Penulis: Candra Wijaya", "Tahun: 2022"],
-  },
-  {
-    title: "Pengantar AI dan Machine Learning",
-    cover: "/books/ai.png",
-    details: ["Penulis: Fitri Nurhaliza", "Tahun: 2024"],
-  },
-];
-
 export default function KategoriDetail() {
-  const { slug } = useParams(); // misal /kategori/teknologi
-  const categoryTitle =
-    slug.charAt(0).toUpperCase() + slug.slice(1).replace("-", " ");
+  const { slug } = useParams(); // misal: teknologi, sains, dll
+  const decodedSlug = decodeURIComponent(slug);
+  const formatted = decodedSlug
+    .replace(/-/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+  const categoryTitle = formatted;
+
+  const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
+  const [loading, setLoading] = useState(true);
+
+  // === Fetch buku berdasarkan kategori ===
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const res = await fetch(`/api/books?category=${slug}`);
+        const data = await res.json();
+        setBooks(data);
+      } catch (err) {
+        console.error("❌ Gagal ambil buku:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBooks();
+  }, [slug]);
 
   const filteredBooks = useMemo(() => {
-    return sampleBooks
+    return books
       .filter((book) =>
         book.title.toLowerCase().includes(searchTerm.toLowerCase())
       )
@@ -47,7 +45,7 @@ export default function KategoriDetail() {
         if (sortOrder === "asc") return a.title.localeCompare(b.title);
         return b.title.localeCompare(a.title);
       });
-  }, [searchTerm, sortOrder]);
+  }, [books, searchTerm, sortOrder]);
 
   return (
     <section className="relative bg-[var(--color-surface-alt)] py-20 md:py-28 overflow-hidden min-h-screen">
@@ -55,9 +53,9 @@ export default function KategoriDetail() {
       <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary-light)]/10 via-transparent to-[var(--color-accent-bg)]/20"></div>
 
       <div className="relative container mx-auto px-6 max-w-6xl">
-        {/* Judul */}
         <h1 className="text-3xl md:text-4xl font-extrabold text-center mb-12 text-[var(--color-primary-dark)]">
-          Kategori: <span className="text-[var(--color-accent)]">{categoryTitle}</span>
+          Kategori:{" "}
+          <span className="text-[var(--color-accent)]">{categoryTitle}</span>
         </h1>
 
         {/* Filter Bar */}
@@ -79,16 +77,19 @@ export default function KategoriDetail() {
           </select>
         </div>
 
-        {/* Grid Buku */}
-        {filteredBooks.length > 0 ? (
+        {loading ? (
+          <p className="text-center text-[var(--color-text-muted)] mt-12 animate-pulse">
+            ⏳ Memuat buku...
+          </p>
+        ) : filteredBooks.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {filteredBooks.map((book, index) => (
-              <Bookcard key={index} book={book} />
+            {filteredBooks.map((book) => (
+              <Bookcard key={book.id} book={book} />
             ))}
           </div>
         ) : (
           <p className="text-center text-[var(--color-text-muted)] mt-12">
-            Tidak ada buku yang ditemukan di kategori ini.
+            Tidak ada buku di kategori ini.
           </p>
         )}
       </div>

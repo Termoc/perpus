@@ -6,10 +6,11 @@ if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
   console.warn("Supabase env vars missing: SUPABASE_URL or SUPABASE_KEY");
 }
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+export const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 export async function POST(req) {
   try {
+    const bucket = process.env.SUPABASE_BUCKET || "library-files";
     const formData = await req.formData();
     const file = formData.get("file");
     const folder = formData.get("folder") || "uploads";
@@ -26,7 +27,7 @@ export async function POST(req) {
 
     // Upload ke Supabase Storage
     const { data: uploadData, error: uploadError } = await supabase.storage
-      .from(process.env.SUPABASE_BUCKET)
+      .from(bucket)
       .upload(fileName, buffer, {
         contentType: file.type,
         upsert: false,
@@ -39,7 +40,7 @@ export async function POST(req) {
 
     // Try to get public URL. If bucket is private, create a signed URL (requires service_role key)
     const { data: publicData } = supabase.storage
-      .from(process.env.SUPABASE_BUCKET)
+      .from(bucket)
       .getPublicUrl(fileName);
 
     if (publicData?.publicUrl) {
@@ -49,7 +50,7 @@ export async function POST(req) {
     // Fallback: try signed URL for 1 hour
     try {
       const { data: signedData, error: signedError } = await supabase.storage
-        .from(process.env.SUPABASE_BUCKET)
+        .from(bucket)
         .createSignedUrl(fileName, 60 * 60);
 
       if (signedError) {
