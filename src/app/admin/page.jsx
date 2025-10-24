@@ -5,7 +5,6 @@ import { isTokenValid } from "../utils/authCheck";
 import DashboardLayout from "@/components/DashboardLayout";
 import BookManager from "@/components/BookManager";
 import ArticleManager from "@/components/ArticleManager";
-
 import { LogOut, Newspaper, BookCopy } from "lucide-react";
 
 export default function AdminPage() {
