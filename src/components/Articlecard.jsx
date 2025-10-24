@@ -5,13 +5,13 @@ import Image from "next/image";
 export default function Articlecard({ article }) {
   if (!article) return null;
 
-  const slug = article.title
+  const id = article.title
     ? article.title.toLowerCase().replace(/\s+/g, "-")
     : "artikel";
 
   return (
     <Link
-      href={`/artikel/${slug}`}
+      href={`/artikel/${id}`}
       className="block flex flex-col sm:flex-row gap-6 items-center 
       bg-white/80 backdrop-blur-md border border-[var(--color-primary-light)]/15 
       rounded-2xl p-5 shadow-md hover:shadow-xl hover:-translate-y-1 
