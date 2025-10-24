@@ -36,10 +36,10 @@ model Book {
   category   Category? @relation(fields: [categoryId], references: [id])
 }
 
-
 model Article {
   id        Int      @id @default(autoincrement())
   title     String
+  slug      String   @unique
   author    String
   image     String?
   content   String
