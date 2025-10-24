@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Bookcard({ book }) {
   const handleClick = () => {
-    if (book.redirectType === "external" && book.redirectTarget) {
+    if (book.redirectType === "link" && book.redirectTarget) {
       window.open(book.redirectTarget, "_blank");
     } else if (book.redirectType === "pdf" && book.redirectTarget) {
       window.open(book.redirectTarget, "_blank");
