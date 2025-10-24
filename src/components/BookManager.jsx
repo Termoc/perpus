@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Eye, Trash2, BookPlus } from "lucide-react";
+import ReactDOM from "react-dom";
+import EditBookModal from "./EditBookModal";
 
 export default function BookManager() {
   const [showConfirm, setShowConfirm] = useState(false);
@@ -85,11 +87,12 @@ export default function BookManager() {
   const handleUpload = async (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
+
     setUploading({ ...uploading, [type]: true });
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("folder", type === "redirectTarget" ? "pdf" : "cover");
+    formData.append("folder", type === "pdf" ? "pdf" : "cover");
 
     try {
       const res = await fetch("/api/upload", {
@@ -97,10 +100,14 @@ export default function BookManager() {
         body: formData,
       });
       const data = await res.json();
+
       if (!res.ok) throw new Error(data.error || "Upload gagal");
-      const field = type === "pdf" ? "redirectTarget" : type;
-      setForm({ ...form, [field]: data.url });
-      alert(`✅ ${type === "cover" ? "Cover" : "PDF"} berhasil diunggah!`);
+
+      setForm({
+        ...form,
+        [type === "pdf" ? "redirectTarget" : "cover"]: data.url,
+      });
+      alert(`✅ ${data.type === "pdf" ? "PDF" : "Cover"} berhasil diunggah!`);
     } catch (err) {
       alert("❌ " + err.message);
     } finally {
@@ -111,25 +118,42 @@ export default function BookManager() {
   // === Submit ===
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const dataToSend = { ...form, year: parseInt(form.year, 10) };
     if (isNaN(dataToSend.year)) {
       alert("❌ Tahun tidak valid");
       return;
     }
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("❌ Token tidak ditemukan. Silakan login ulang.");
+      return;
+    }
+
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/books", {
-        method: "POST",
+      const method = selectedBook ? "PUT" : "POST";
+      const url = selectedBook ? `/api/books/${selectedBook.id}` : "/api/books";
+
+      const res = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(dataToSend),
       });
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Gagal tambah buku");
-      alert("✅ Buku berhasil ditambahkan!");
+      if (!res.ok) throw new Error(data.error || "Gagal menyimpan buku");
+
+      alert(
+        selectedBook
+          ? "✅ Buku berhasil diperbarui!"
+          : "✅ Buku berhasil ditambahkan!"
+      );
+
+      // Reset form dan refresh data
       setForm({
         title: "",
         author: "",
@@ -139,10 +163,69 @@ export default function BookManager() {
         redirectType: "link",
         redirectTarget: "",
       });
+      setSelectedBook(null);
       fetchBooks();
     } catch (err) {
       alert("❌ " + err.message);
     }
+  };
+
+  const [showEdit, setShowEdit] = useState(false);
+
+  const handleEditClick = (book) => {
+    setSelectedBook(book);
+    setForm({
+      title: book.title,
+      author: book.author,
+      year: book.year,
+      category: book.category?.name || "",
+      cover: book.cover || "",
+      redirectType: book.redirectType || "link",
+      redirectTarget: book.redirectTarget || "",
+    });
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!selectedBook) return alert("Tidak ada buku yang dipilih.");
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`/api/books/${selectedBook.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...form,
+          year: parseInt(form.year, 10),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal memperbarui buku");
+      alert("✅ Buku berhasil diperbarui!");
+      setShowEdit(false);
+      setSelectedBook(null);
+      fetchBooks();
+    } catch (err) {
+      alert("❌ " + err.message);
+    }
+  };
+
+  // === Batal Edit ===
+  const handleCancelEdit = () => {
+    setSelectedBook(null);
+    setForm({
+      title: "",
+      author: "",
+      year: "",
+      category: "",
+      cover: "",
+      redirectType: "link",
+      redirectTarget: "",
+    });
   };
 
   return (
@@ -204,7 +287,13 @@ export default function BookManager() {
                       "—"
                     )}
                   </td>
-                  <td className="p-3">
+                  <td className="p-3 flex items-center gap-3">
+                    <button
+                      onClick={() => handleEditClick(b)}
+                      className="text-blue-600 hover:text-blue-800 font-bold flex items-center gap-2"
+                    >
+                      ✏️ Edit
+                    </button>
                     <button
                       onClick={() => handleDeleteClick(b)}
                       className="text-red-600 hover:text-red-800 font-bold flex items-center gap-2"
@@ -352,44 +441,73 @@ export default function BookManager() {
           </div>
         )}
 
-        <button
-          type="submit"
-          className="col-span-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold py-3 rounded-md transition-all duration-300 flex justify-center items-center gap-3"
-        >
-          Tambah Buku <BookPlus />
-        </button>
+        <div className="col-span-full flex gap-3">
+          <button
+            type="submit"
+            className="flex-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white font-semibold py-3 rounded-md transition-all duration-300 flex justify-center items-center gap-3"
+          >
+            {selectedBook ? "Simpan Perubahan" : "Tambah Buku"} <BookPlus />
+          </button>
+
+          {selectedBook && (
+            <button
+              type="button"
+              onClick={handleCancelEdit}
+              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-5 rounded-md transition-all duration-300"
+            >
+              Batal Edit
+            </button>
+          )}
+        </div>
       </form>
 
       {/* === Modal Konfirmasi Hapus === */}
-      {showConfirm && selectedBook && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white/90 backdrop-blur-lg p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center border border-gray-200">
-            <h3 className="text-xl font-bold mb-3 text-gray-900">
-              Hapus Buku?
-            </h3>
-            <p className="mb-6 text-gray-700">
-              Buku <strong>{selectedBook.title}</strong> akan dihapus secara
-              permanen. Apakah kamu yakin?
-            </p>
-            <div className="flex justify-center gap-3">
-              <button
-                onClick={() => setShowConfirm(false)}
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-5 rounded-lg transition duration-300"
-                disabled={isDeleting}
-              >
-                Batal
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-5 rounded-lg transition duration-300"
-                disabled={isDeleting}
-              >
-                {isDeleting ? "Menghapus..." : "Ya, Hapus"}
-              </button>
+      {showConfirm &&
+        selectedBook &&
+        ReactDOM.createPortal(
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div
+              className="absolute inset-0 bg-black/60 transition-opacity"
+              onClick={() => setShowConfirm(false)}
+            ></div>
+            <div className="relative z-10 bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center border border-gray-200">
+              <h3 className="text-xl font-bold mb-3 text-gray-900">
+                Hapus Buku?
+              </h3>
+              <p className="mb-6 text-gray-700">
+                Buku <strong>{selectedBook.title}</strong> akan dihapus secara
+                permanen. Apakah kamu yakin?
+              </p>
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-5 rounded-lg transition duration-300"
+                  disabled={isDeleting}
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-5 rounded-lg transition duration-300"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "Menghapus..." : "Ya, Hapus"}
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
+      {/* {selectedBook &&
+        ReactDOM.createPortal(
+          <EditBookModal
+            book={selectedBook}
+            categories={categories}
+            onClose={() => setSelectedBook(null)}
+            onUpdated={fetchBooks}
+          />,
+          document.body
+        )} */}
     </div>
   );
 }

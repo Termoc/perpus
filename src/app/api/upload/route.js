@@ -6,7 +6,10 @@ if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
   console.warn("Supabase env vars missing: SUPABASE_URL or SUPABASE_KEY");
 }
 
-export const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+export const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 
 export async function POST(req) {
   try {
@@ -35,7 +38,10 @@ export async function POST(req) {
 
     if (uploadError) {
       console.error("Supabase upload error:", uploadError);
-      return Response.json({ error: uploadError.message || uploadError }, { status: 502 });
+      return Response.json(
+        { error: uploadError.message || uploadError },
+        { status: 502 }
+      );
     }
 
     // Try to get public URL. If bucket is private, create a signed URL (requires service_role key)
@@ -55,13 +61,19 @@ export async function POST(req) {
 
       if (signedError) {
         console.warn("Signed URL error:", signedError);
-        return Response.json({ url: null, note: "Uploaded but cannot generate public URL. Check bucket visibility or use service_role key." });
+        return Response.json({
+          url: null,
+          note: "Uploaded but cannot generate public URL. Check bucket visibility or use service_role key.",
+        });
       }
 
       return Response.json({ url: signedData.signedUrl });
     } catch (e) {
       console.warn("Signed URL generation failed:", e);
-      return Response.json({ url: null, note: "Uploaded but URL generation failed." });
+      return Response.json({
+        url: null,
+        note: "Uploaded but URL generation failed.",
+      });
     }
   } catch (err) {
     console.error("Upload Error:", err);

@@ -4,10 +4,11 @@ import { verifyToken } from "../../_utils/auth";
 const prisma = new PrismaClient();
 
 // === DELETE ===
-export async function DELETE(req, { params }) {
+export async function DELETE(req, context) {
   try {
-    const user = await verifyToken(req);
+    const params = await context.params;
     const { id } = params;
+    const user = await verifyToken(req);
 
     await prisma.book.delete({ where: { id: parseInt(id) } });
     return Response.json({ message: "Buku berhasil dihapus." });
@@ -18,9 +19,10 @@ export async function DELETE(req, { params }) {
 }
 
 // === UPDATE ===
-export async function PUT(req, { params }) {
+export async function PUT(req, context) {
   try {
     const user = await verifyToken(req);
+    const params = await context.params;
     const { id } = params;
     const body = await req.json();
 
