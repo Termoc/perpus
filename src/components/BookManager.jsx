@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Eye, Trash2, BookPlus } from "lucide-react";
 import ReactDOM from "react-dom";
-import EditBookModal from "./EditBookModal";
 
 export default function BookManager() {
   const [showConfirm, setShowConfirm] = useState(false);
