@@ -1,17 +1,25 @@
 import { PrismaClient } from "@prisma/client";
 
-// Gunakan globalThis agar Prisma tidak diinisialisasi dua kali saat hot reload
 const globalForPrisma = globalThis;
 
-export const prisma =
+const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: ["query", "error", "warn"], // opsional, bisa dihapus kalau tidak ingin log
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
+      },
+    },
   });
 
-// Simpan instance ke globalThis saat development
+// 🚀 Pastikan hanya 1 instance Prisma aktif di development
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
 
+export { prisma };
 export default prisma;
